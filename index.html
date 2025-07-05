@@ -1,0 +1,306 @@
+import React, { useState, useEffect } from 'react';
+
+// Tailwind CSS는 CDN으로 로드되므로 별도의 import가 필요 없습니다.
+
+// 예시 대학교 데이터 (실제 데이터는 백엔드에서 가져와야 합니다)
+const universitiesData = [
+  {
+    id: 'snu',
+    name: '서울대학교',
+    location: '서울',
+    departments: [
+      '생명과학부',
+      '생명공학공동연구원',
+      '농생명공학부',
+      '수의학과',
+      '의생명공학전공'
+    ],
+    description: '대한민국을 대표하는 연구 중심 대학으로, 다양한 생명공학 분야에서 선도적인 연구를 수행합니다.',
+    imageUrl: 'https://placehold.co/400x250/b3e0ff/000000?text=Seoul+National+University'
+  },
+  {
+    id: 'kaist',
+    name: 'KAIST',
+    location: '대전',
+    departments: [
+      '생명과학과',
+      '생명화학공학과',
+      '의과학대학원',
+      '바이오및뇌공학과'
+    ],
+    description: '과학기술 분야의 최고 인재 양성을 목표로 하는 연구 중심 대학입니다. 생명공학 분야에서 혁신적인 연구를 진행합니다.',
+    imageUrl: 'https://placehold.co/400x250/c2f0c2/000000?text=KAIST'
+  },
+  {
+    id: 'yonsei',
+    name: '연세대학교',
+    location: '서울',
+    departments: [
+      '생명시스템대학',
+      '생화학과',
+      '시스템생물학과',
+      '생명공학과'
+    ],
+    description: '글로벌 명문 사학으로, 생명과학 및 공학 분야에서 융복합 연구와 교육을 강조합니다.',
+    imageUrl: 'https://placehold.co/400x250/ffd7b3/000000?text=Yonsei+University'
+  },
+  {
+    id: 'korea',
+    name: '고려대학교',
+    location: '서울',
+    departments: [
+      '생명과학대학',
+      '생명공학부',
+      '식품공학과',
+      '환경생태공학부'
+    ],
+    description: '자유, 정의, 진리를 바탕으로 인류사회에 공헌하는 인재를 양성하는 명문 사학입니다. 생명공학 분야에서도 뛰어난 성과를 보입니다.',
+    imageUrl: 'https://placehold.co/400x250/d9b3ff/000000?text=Korea+University'
+  },
+  {
+    id: 'postech',
+    name: 'POSTECH',
+    location: '포항',
+    departments: [
+      '생명과학과',
+      '화학공학과 (생명공학 트랙)',
+      '융합생명공학부'
+    ],
+    description: '소수 정예의 엘리트 과학기술 인재를 양성하는 연구 중심 대학입니다. 생명공학 분야에서 세계적인 수준의 연구를 지향합니다.',
+    imageUrl: 'https://placehold.co/400x250/ffb3d9/000000?text=POSTECH'
+  },
+  {
+    id: 'skku',
+    name: '성균관대학교',
+    location: '서울/수원',
+    departments: [
+      '생명과학과',
+      '생명공학대학',
+      '바이오메카트로닉스학과',
+      '나노과학기술학과 (바이오융합)'
+    ],
+    description: '600년 역사의 전통과 혁신을 겸비한 대학으로, 생명공학 분야에서 학제간 융합 연구를 활발히 진행합니다.',
+    imageUrl: 'https://placehold.co/400x250/b3ffeb/000000?text=Sungkyunkwan+University'
+  },
+  {
+    id: 'hanyang',
+    name: '한양대학교',
+    location: '서울/안산',
+    departments: [
+      '생명공학과',
+      '생명과학과',
+      '식품영양학과',
+      '융합전자공학부 (바이오전자)'
+    ],
+    description: '실용학풍을 바탕으로 사회에 기여하는 인재를 양성하는 대학입니다. 생명공학 분야에서도 산업 연계 연구가 활발합니다.',
+    imageUrl: 'https://placehold.co/400x250/e0b3ff/000000?text=Hanyang+University'
+  },
+  {
+    id: 'chungang',
+    name: '중앙대학교',
+    location: '서울/안성',
+    departments: [
+      '생명공학대학',
+      '생명과학과',
+      '시스템생명공학과',
+      '식품공학과'
+    ],
+    description: '창의와 혁신을 통해 미래 사회를 선도하는 대학입니다. 생명공학 분야에서 다양한 연구와 교육 프로그램을 제공합니다.',
+    imageUrl: 'https://placehold.co/400x250/ffe0b3/000000?text=Chung-Ang+University'
+  },
+  {
+    id: 'kangwon',
+    name: '강원대학교',
+    location: '춘천',
+    departments: [
+      '생명과학과',
+      '생명건강공학과',
+      '생물의소재공학과',
+      '의생명융합학부(의생명시스템과학전공)',
+      '의생명융합학부(의생명공학전공)',
+      '생물공학전공 (공과대학)',
+      '바이오산업공학부 (식품생명공학전공, 바이오시스템기계공학전공)'
+    ],
+    description: '강원도를 대표하는 거점 국립대학으로, 의생명과학 및 바이오산업 분야에서 다양한 학과와 연구를 진행하고 있습니다.',
+    imageUrl: 'https://placehold.co/400x250/b3e0ff/000000?text=Kangwon+National+University'
+  },
+  {
+    id: 'konkuk',
+    name: '건국대학교',
+    location: '서울/충주',
+    departments: [
+      '생명과학특성학과',
+      '생물공학과',
+      '융합생명공학과',
+      '의생명공학과',
+      '시스템생명공학과',
+      '줄기세포재생공학과',
+      '바이오융합과학부 (의료생명대학)'
+    ],
+    description: '생명과학 분야의 기초 및 응용 학문을 아우르며, 바이오산업 및 생명공학 분야의 실무 능력을 갖춘 전문가 양성을 목표로 합니다.',
+    imageUrl: 'https://placehold.co/400x250/ffcc99/000000?text=Konkuk+University'
+  },
+  {
+    id: 'inha',
+    name: '인하대학교',
+    location: '인천',
+    departments: [
+      '생명공학과',
+      '생명과학과'
+    ],
+    description: '국내 최초로 공과대학에 생물공학과를 설립하여 생명공학 분야의 핵심적인 역할을 수행해 온 명문 대학입니다.',
+    imageUrl: 'https://placehold.co/400x250/cceeff/000000?text=Inha+University'
+  },
+  {
+    id: 'chungbuk',
+    name: '충북대학교',
+    location: '청주',
+    departments: [
+      '생명과학부 (생물학과, 미생물학과, 생화학과)',
+      '농업생명환경대학 (식품생명공학과, 응용생명공학부, 바이오시스템공학과, 환경생명화학과 등)'
+    ],
+    description: '충북 지역 거점 국립대학으로, 생명과학 및 농업생명환경 분야에서 폭넓은 교육과 연구를 제공합니다.',
+    imageUrl: 'https://placehold.co/400x250/ccffcc/000000?text=Chungbuk+National+University'
+  },
+  {
+    id: 'ewha',
+    name: '이화여자대학교',
+    location: '서울',
+    departments: [
+      '생명과학과',
+      '식품생명공학전공',
+      '바이오융합과학과 (대학원)',
+      '기계·생명공학전공 (공과대학)'
+    ],
+    description: '생명과학 분야의 기초 및 융합 연구를 선도하며, 여성 생명과학 인재 양성에 힘쓰는 명문 여자대학교입니다.',
+    imageUrl: 'https://placehold.co/400x250/ffccff/000000?text=Ewha+Womans+University'
+  }
+];
+
+function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('전체');
+  const [filteredUniversities, setFilteredUniversities] = useState(universitiesData);
+
+  // 지역 옵션 추출 (중복 제거)
+  const locations = ['전체', ...new Set(universitiesData.map(uni => uni.location))].sort();
+
+  useEffect(() => {
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    const newFiltered = universitiesData.filter(uni => {
+      const matchesSearchTerm =
+        uni.name.toLowerCase().includes(lowercasedSearchTerm) ||
+        uni.description.toLowerCase().includes(lowercasedSearchTerm) ||
+        uni.departments.some(dept => dept.toLowerCase().includes(lowercasedSearchTerm));
+
+      const matchesLocation =
+        selectedLocation === '전체' || uni.location === selectedLocation;
+
+      return matchesSearchTerm && matchesLocation;
+    });
+    setFilteredUniversities(newFiltered);
+  }, [searchTerm, selectedLocation]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans text-gray-800 p-4 sm:p-8">
+      {/* Tailwind CSS CDN 링크 (React 앱에서는 보통 index.html에 추가) */}
+      <script src="https://cdn.tailwindcss.com"></script>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+      <style>
+        {`
+          body {
+            font-family: 'Inter', sans-serif;
+          }
+        `}
+      </style>
+
+      <header className="text-center mb-10">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-blue-700 mb-4 tracking-tight">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+            바이오 길라잡이
+          </span>
+        </h1>
+        <p className="text-lg text-gray-600">
+          나에게 맞는 생명공학 학과를 찾아보세요! 🧬
+        </p>
+      </header>
+
+      <div className="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-blue-200">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          {/* 검색 입력 필드 */}
+          <input
+            type="text"
+            placeholder="대학교 이름, 학과명, 설명으로 검색..."
+            className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out shadow-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          {/* 지역 필터 드롭다운 */}
+          <select
+            className="p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out shadow-sm"
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+          >
+            {locations.map(loc => (
+              <option key={loc} value={loc}>
+                {loc}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* 검색 결과 표시 */}
+        {filteredUniversities.length === 0 ? (
+          <p className="text-center text-gray-500 text-lg py-10">
+            검색 결과가 없습니다. 다른 검색어를 입력해 보세요.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredUniversities.map(uni => (
+              <div
+                key={uni.id}
+                className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden transform transition duration-300 hover:scale-[1.02] hover:shadow-lg flex flex-col"
+              >
+                {/* 이미지 */}
+                <img
+                  src={uni.imageUrl}
+                  alt={`${uni.name} 이미지`}
+                  className="w-full h-40 object-cover"
+                  onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x250/cccccc/333333?text=${uni.name}`; }}
+                />
+                <div className="p-5 flex-grow flex flex-col">
+                  {/* 대학교 이름 */}
+                  <h2 className="text-2xl font-bold text-blue-700 mb-2">{uni.name}</h2>
+                  {/* 위치 */}
+                  <p className="text-gray-600 mb-3 flex items-center">
+                    <svg className="w-4 h-4 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path></svg>
+                    {uni.location}
+                  </p>
+                  {/* 설명 */}
+                  <p className="text-gray-700 mb-4 text-sm flex-grow">{uni.description}</p>
+                  {/* 학과 목록 */}
+                  <div className="mt-auto">
+                    <h3 className="font-semibold text-gray-800 mb-2">주요 생명공학 관련 학과:</h3>
+                    <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                      {uni.departments.map((dept, index) => (
+                        <li key={index}>{dept}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <footer className="text-center mt-10 text-gray-500 text-sm">
+        <p>&copy; 2025 바이오 길라잡이. 모든 권리 보유.</p>
+        <p>데이터는 예시이며, 실제 정보와 다를 수 있습니다.</p>
+      </footer>
+    </div>
+  );
+}
+
+export default App;
